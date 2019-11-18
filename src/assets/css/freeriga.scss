@@ -1,0 +1,73 @@
+@charset "utf-8";
+$navbar-padding-vertical: 0;
+$primary: #FFE116;
+$success: #dec02e;
+@import "~bulma/bulma";
+
+main {
+  padding-top: 2rem;
+}
+.masonry_wrap {
+  flex-wrap: wrap;
+}
+
+.loading {
+  text-align: center;
+}
+
+.modal {
+  .modal-content {
+    padding: 2rem;
+    background-color: #EEE;
+  }
+}
+form {
+  .input_flag {
+    float: left;
+    margin-right: 0.5rem;
+  }
+  textarea.comment {
+    width: 90%;
+    max-width: 90%;
+    min-width: 90%;
+  }
+}
+
+nav {
+  .navbar-menu {
+    a.id_button {
+      white-space: pre;
+    }
+  }
+}
+blockquote {
+  padding: 0 1.5rem;
+  font-size: 1.2rem;
+  font-style: italic;
+}
+
+.date {
+  font-style: italic;
+  font-size: 0.8rem;
+}
+article.box {
+  border: 3px solid #333;
+  background-image: url('assets/images/fr_foot.png');
+  background-size: 45px;
+  background-repeat: no-repeat;
+  background-position: top 2px right 2px; 
+}
+
+.comment_container {
+  .comment {
+    border-bottom: 1px solid #333;
+    padding: 1.2rem 0.8rem;
+
+    .column {
+      padding: 0.2rem 0.75rem;
+    }
+  }
+  .comment:last-child {
+    border-bottom: none;
+  }
+}
