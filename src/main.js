@@ -5,20 +5,42 @@ import './registerServiceWorker'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueI18n from 'vue-i18n'
+import router from './router'
 import VueTimeago from 'vue-timeago'
+// import VueAuthenticate from 'vue-authenticate'
 import { VueMasonryPlugin } from 'vue-masonry'
 import Toasted from 'vue-toasted'
 import _ from 'lodash'
 import ActionCableVue from 'actioncable-vue'
 
+Vue.router = router
 Vue.use(ActionCableVue, {
     debug: true,
     debugLevel: 'error',
-    connectionUrl: 'ws://localhost:3000/cable',
+    connectionUrl: process.env.VUE_APP_SOCKET_URL,
     connectImmediately: true
 })
+
+// Vue.use(VueAuthenticate, {
+//   baseUrl: 'http://localhost:3000', // Your API domain
+  
+//   providers: {
+//     facebook: {
+//       clientId: '163602387889379',
+//       redirectUri: 'http://localhost:8080/auth/callback' // Your client app URL
+//     }
+//   }
+// })
+
 Vue.use(Toasted)
 Vue.use(VueMasonryPlugin)
+
+Vue.use(VueAxios, axios)
+Vue.use(VueI18n)
+Vue.config.productionTip = false
+Vue.axios.defaults.baseURL = process.env.VUE_APP_API_URL
+
+
 Vue.use(VueTimeago, {
   name: 'Timeago', // Component name, `Timeago` by default
   locale: 'lv', // Default locale
@@ -29,118 +51,41 @@ Vue.use(VueTimeago, {
   }
 })
 
-Vue.use(VueAxios, axios)
-Vue.use(VueI18n)
-Vue.config.productionTip = false
-Vue.axios.defaults.baseURL = process.env.VUE_APP_API_URL
+Vue.use(require('@websanova/vue-auth'), {
+  authRedirect: {path: '/' },
+  // tokenExpired: false,
+  auth: require('@websanova/vue-auth/drivers/auth/devise.js'),
+  // auth: require('./drivers/devise_oauth.js'),
+  http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
+  router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
+  rolesVar: 'roles',
+  loginData: { url: Vue.axios.defaults.baseURL + '/terminal_auth/sign_in', method: 'POST', redirect: '/' },
+  logoutData: { url: Vue.axios.defaults.baseURL + '/terminal_auth/sign_out', method: 'DELETE', redirect: '/login' },
+  refreshData: {
+    enabled: true,
+    url: Vue.axios.defaults.baseURL + '/terminal_auth/validate_token', method: 'GET',
+    interval: 5,
+  },
+  parseUserData: function (data) {
+    // console.log('parseUserData:')
+    // console.log('setting store to')
+    // console.log(data)
+    // store.commit('changeLocation', data.data.attributes.location_id)
 
-const translations = {
-  en: {
-    message: {
-      past: 'Past (this has happened)',
-      present: 'Present (this is happening)',
-      future: 'Future (this should happen)',
-      past_status: 'Completed',
-      present_status: 'In progress',
-      future_status: 'Not yet started',
-      comments: 'Comments',
-      Task: 'Task',
-      signed_in_as: 'Signed in as ',
-      new_post: 'New post',
-      posting_as: 'Posting as',
-      post_a_new_task: 'Post a new task',
-      post_blurb: 'Tell about something you did, something being done, or something that needs doing.',
-      which_quarter: 'Which quarter?',
-      which_location: 'Where at?',
-      whats_going_on: 'What\'s going on? [write in at least one language]',
-      task_status: 'Task status',
-      new_name: 'New name:',
-      mood: 'Mood',
-      what_mood_are_you_in: 'What mood are you in?',
-      where_are_you: 'Where are you?',
-      choose_whether: 'Choose whether this is ...',
-      discuss: 'Discuss',
-      change: 'Change',
-      submit_comment: 'Post comment',
-      see_all: 'see all...',
-      see_less: 'see fewer...',
-      Comment: 'Comment',
-      end_of_data: 'There are no more items to load.',
-      no_location: 'Nowhere specific',
-      what_do_you_want_to_say: 'What do you want to say?'
-    }
+    // if (data.data) {
+    //   data.roles = data.data.attributes.roles
+    // // console.log(data)
+    // }
+    return data
   },
-  lv: {
-    message: {
-      past: 'Paveikts',
-      present: 'Pprocesā',
-      future: 'Gaida uzsākšanu',
-      past_status: 'paveikts',
-      present_status: 'procesā',
-      future_status: 'Nav vēl uzsākts',
-      comments: 'Komentāri',
-      Task: 'Uzdevums',
-      signed_in_as: 'Iežurnālējies kā',
-      new_post: 'Jauns ieraksts',
-      posting_as: 'Publicēja:',
-      post_a_new_task: 'Publicēt jaunu uzdevumu',
-      post_blurb: 'Pastāsti par to, ko paveici vai kas būtu jāpaveic',
-      which_quarter: 'Kurš kvartāls?',
-      which_location: 'Atrašanās vieta',
-      whats_going_on: 'Kas notiek?',
-      task_status: 'Uzdevuma statuss',
-      new_name: 'Jauns vārds:',
-      mood: 'Noskaņojums',
-      what_mood_are_you_in: 'Kāds Tev ir noskaņojums?',
-      where_are_you: 'Kur Tu esi?',
-      choose_whether: 'Izvēlne',
-      discuss: 'Diskusijas',
-      change: 'Change',
-      submit_comment: 'Post comment',
-      see_all: 'see all...',
-      see_less: 'see fewer...',
-      Comment: 'Comment',
-      end_of_data: 'There are no more items to load.',
-      no_location: 'Nowhere specific',
-      what_do_you_want_to_say: 'What do you want to say?'
-    }
-  },
-  ru: {
-    message: {
-      past: 'Past (this has happened)',
-      present: 'Present (this is happening)',
-      future: 'Future (this should happen)',
-      past_status: 'Completed',
-      present_status: 'In progress',
-      future_status: 'Not yet started',
-      comments: 'Comments',
-      Task: 'Task',
-      signed_in_as: 'Signed in as ',
-      new_post: 'New post',
-      posting_as: 'Posting as',
-      post_a_new_task: 'Post a new task',
-      post_blurb: 'Tell about something you did, something being done, or something that needs doing.',
-      which_quarter: 'Which quarter?',
-      which_location: 'Where at?',
-      whats_going_on: 'What\'s going on? [write in at least one language]',
-      task_status: 'Task status',
-      new_name: 'New name:',
-      mood: 'Mood',
-      what_mood_are_you_in: 'What mood are you in?',
-      where_are_you: 'Where are you?',
-      choose_whether: 'Choose whether this is ...',
-      discuss: 'Discuss',
-      change: 'Change',
-      submit_comment: 'Post comment',
-      see_all: 'see all...',
-      see_less: 'see fewer...',
-      Comment: 'Comment',
-      end_of_data: 'There are no more items to load.',
-      no_location: 'Nowhere specific',
-      what_do_you_want_to_say: 'What do you want to say?'
-    }
+  fetchData: {
+   url: Vue.axios.defaults.baseURL + '/auth/validate_token', 
+   method: 'GET',
+   enabled: true
   }
-}
+})
+
+const translations = require('./translations').translations
 
 const i18n = new VueI18n({
   locale: 'lv',
@@ -154,18 +99,19 @@ if (localStorage.locale) {
 }
 
 new Vue({
+  router,
   i18n,
   store,
   render: h => h(App),
-  created( ) {
+  created () {
     axios.interceptors.response.use((response) => {
       return response
     }, function (error) {
       if (error.response) {
         if (error.response.status === 403) {
-          console.log('403 error')
+          // console.log('403 error')
         } 
-        else if (error.response.status === 422) {
+        else if (error.response.status === 422 || error.response.status === 401) {
           if (error.response.data.errors.full_messages) {
             error.message = error.response.data.errors.full_messages.join('; ')
           } else {
@@ -180,7 +126,8 @@ new Vue({
           }
         } 
         else {
-          console.log('unknown error')
+          // console.log('unknown error:')
+          // console.log(error)
         }
       }
       let duration = 5000

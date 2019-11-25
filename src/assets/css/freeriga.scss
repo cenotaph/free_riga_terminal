@@ -56,6 +56,12 @@ article.box {
   background-size: 45px;
   background-repeat: no-repeat;
   background-position: top 2px right 2px; 
+  img {
+    &.post_image {
+      // max-height: 350px;
+      min-height: 350px;
+    }
+  }
 }
 
 .comment_container {

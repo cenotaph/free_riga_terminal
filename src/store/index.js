@@ -8,7 +8,8 @@ export default new Vuex.Store({
     name: 'anonymous cat',
     colour: '#333',
     quarter: 1,
-    location: 2
+    location: 2,
+    human: false
   },
   mutations: {
     changeColour (state, newColour) {
@@ -24,7 +25,12 @@ export default new Vuex.Store({
 
     changeName (state, newName) {
       state.name = newName
+    },
+
+    changeHuman (state, newType) {
+      state.human = newType
     }
+
   },
   actions: {
   },
