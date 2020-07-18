@@ -15,7 +15,7 @@
     "core-js": "^3.3.2",
     "date-fns": "^2.7.0",
     "json-api-normalizer": "^0.4.16",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.10",
     "vue-authenticate": "^1.4.1",
